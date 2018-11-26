@@ -29,7 +29,6 @@ beforeEach(async () => {
 		JSON.parse(compiledCryptstarter.interface),
 		cryptstarterAddress )
 
-	console.log('The address of the cryptstarter is:' + cryptstarter.options.address + "\nThe address of the factory is:" + factory.options.address);
 });
 
 describe( 'campaigns', () => {
@@ -60,10 +59,63 @@ describe( 'campaigns', () => {
 		});
 		} catch(err) {
 			assert(err)
-			console.log("wank hard:  " + err)
 			return
 		}
 		assert(false)
+	});
+
+	it('processes requests', async () => {
+		const receiver = accounts[4];
+		const investor1 = accounts[2];
+		const investor2 = accounts[5];
+		var originalBalance = await web3.eth.getBalance(receiver);
+		originalBalance = web3.utils.fromWei(originalBalance, 'ether')
+		console.log("Receiver balance before finalise is:  "+originalBalance);
+		
+		// create a request
+		const newRequest = await cryptstarter.methods
+			.paymentRequest('Facebook ads', web3.utils.toWei('5', 'ether'), receiver)
+			.send({
+			from: accounts[0],
+			gas: '1000000'
+		});
+
+		// become an investor
+		await cryptstarter.methods.contribute().send({
+			from: investor1,
+			value: web3.utils.toWei('5', 'ether')
+		});
+
+		await cryptstarter.methods.contribute().send({
+			from: investor2,
+			value: web3.utils.toWei('5', 'ether')
+		});
+
+		// appprove request
+		await cryptstarter.methods.approveRequest(0).send({
+			from: investor1,
+			gas: '1000000'
+		});
+
+		await cryptstarter.methods.approveRequest(0).send({
+			from: investor2,
+			gas: '1000000'
+		})
+
+		await cryptstarter.methods.finaliseRequest(0).send({
+			from: accounts[0],
+			gas: '1000000'
+		});
+
+		const approved = await cryptstarter.methods.requests(0).call();
+		var approvedValue = web3.utils.fromWei(approved.value, 'ether')
+		var balance = await web3.eth.getBalance(receiver);
+		balance = web3.utils.fromWei(balance, 'ether')
+		console.log("Receiver balance AFTER finalise is:  "+balance);
+
+		assert.equal(approved.complete, true);
+		assert.equal(balance, (parseFloat(originalBalance)+parseFloat(approvedValue)))
+
 	});
 
 });
