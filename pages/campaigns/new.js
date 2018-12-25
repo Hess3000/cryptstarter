@@ -3,27 +3,33 @@ import Layout from '../../components/layout.js';
 import { Form, Button, Input, Message } from 'semantic-ui-react';
 import factory from '../../ethereum/factory.js';
 import web3 from '../../ethereum/web3.js';
+import { Router } from '../../routes';
 
 class CampaignNew extends Component {
 	state = {
 		minimumContribution: '',
-		errorMessage: ''
+		errorMessage: '',
+		loading: false
 	};
 
 	onSubmit = async (event) => {
 		event.preventDefault();
 
+		this.setState({ loading: true, errorMessage: '' });
 		try {
 			const accounts = await web3.eth.getAccounts();
 			await factory.methods
 				.createCryptstarter(this.state.minimumContribution)
 				.send({
 					from: accounts[0]
-			})
+			});
+
+			Router.pushRoute('/');
+
 		} catch(err) {
 			this.setState({ errorMessage: err.message });
 		};
-		
+		this.setState({loading: false})
 	};
 
 	render() {
@@ -42,7 +48,10 @@ class CampaignNew extends Component {
 						 />
 					</Form.Field>
 					<Message error header="Ooops!" content={this.state.errorMessage}/>
-					<Button primary>Create!</Button>
+					<Button 
+					primary
+					loading={this.state.loading}
+					>Create!</Button>
 				</Form>
 			</Layout>
 		)

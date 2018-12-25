@@ -1,6 +1,7 @@
 const HDWalletProvider = require('truffle-hdwallet-provider');
 const Web3 = require('web3');
 const compiledFactory = require('./build/Cryptstarterfactory.json');
+const web3 = require()
 
 const provider = new HDWalletProvider(
   'tooth rescue frown bicycle road during cup story spoil engage obey area',

@@ -3,7 +3,7 @@ import CryptstarterFactory from './build/CryptstarterFactory.json';
 
 const contractInstance = new web3.eth.Contract(
 	JSON.parse(CryptstarterFactory.interface),
-	'0x8323eFF86AD369688d2199c12e841e3a38Cf9580'
+	'0xAB91860Dc6C4F8075bbAE8A7cc56ef3d3B391782'
 	);
 
 export default contractInstance

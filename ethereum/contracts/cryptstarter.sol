@@ -84,4 +84,21 @@ contract Cryptstarter {
         request.complete = true;
     }
     
+    // get information about campaign
+    function getSummary() public view returns (uint, uint, uint, uint, address) {
+        return (
+        this.balance,
+        minimumContribution,
+        requests.length,
+        investorCount,
+        manager
+        );
+    }
+    
+    function getRequestCount() public view returns (uint) {
+        return (
+            requests.length
+        );
+    }
+    
 }

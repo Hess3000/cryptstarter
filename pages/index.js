@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Card, Button } from 'semantic-ui-react';
 import contractInstance from '../ethereum/factory.js';
-import Layout from '../components/layout.js'
+import Layout from '../components/layout.js';
+import { Link } from '../routes';
 
 class CrypstarterIndex extends Component {
 
@@ -15,7 +16,11 @@ class CrypstarterIndex extends Component {
 		const items = this.props.campaigns.map(address => {
 			return {
 				header: address,
-				description: <a>Link to address details</a>,
+				description: (
+						<Link route={`/campaigns/${address}`}>
+							<a>View Campaign</a>
+						</Link>
+					), 
 				fluid: true
 			};
 		});
@@ -30,12 +35,17 @@ class CrypstarterIndex extends Component {
 					
 					<h3>Open campaigns</h3>
 					
-					<Button
-						floated='right'
-						content='Create New'
-						icon='add'
-						primary
-					/>
+					<Link route="/campaigns/new">
+						<a>
+							<Button
+								floated='right'
+								content='Create New'
+								icon='add'
+								primary
+							/>
+						</a>
+					</Link>	
+
 					{this.renderCryptstarter()}
 				</div>
 			</Layout>
